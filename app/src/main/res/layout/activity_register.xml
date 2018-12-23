@@ -6,6 +6,7 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout
+        android:id="@+id/register_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -22,7 +23,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="30dp"
             android:gravity="center"
             android:text="Create Account"
             android:textColor="#000"
@@ -43,6 +43,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
+            android:drawableEnd="@drawable/ic_person_outline_black_24dp"
             android:hint="Name"
             android:inputType="textPersonName" />
 
@@ -55,6 +56,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
+            android:drawableEnd="@drawable/ic_mail_outline_black_24dp"
             android:hint="Email"
             android:inputType="textEmailAddress" />
 
@@ -67,6 +69,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
+            android:drawableEnd="@drawable/ic_lock_outline_black_24dp"
             android:hint="Password"
             android:inputType="textPassword" />
 
@@ -79,26 +82,53 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
+            android:drawableEnd="@drawable/ic_lock_outline_black_24dp"
             android:hint="Confirm Password"
             android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="by Signing in you accept our"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tc_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="terms and condition"
+            android:textColor="#4d58fc"
+            android:textSize="14sp" />
 
 
         <Button
             android:id="@+id/register_acc_btn"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/buttonstyle"
             android:text="Create Account" />
 
+        <TextView
+            android:id="@+id/login_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Already have account?Login here"
+            android:textSize="16sp"
+            android:textColor="#4d58fc"
+            android:layout_marginTop="8dp"/>
+
     </LinearLayout>
-
-
-
-
 
 
 

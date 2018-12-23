@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.firebaseauth.hunk.firebaseauth">
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,10 +19,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".WelcomeActivity" />
-        <activity android:name=".EmailVerificationActivity">
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait"/>
+
+
+        <activity android:name=".RegisterActivity"
+            android:screenOrientation="portrait"/>
+
+
+        <activity
+            android:name=".WelcomeActivity"
+            android:screenOrientation="portrait"/>
+
+
+        <activity
+            android:name=".EmailVerificationActivity"
+            android:screenOrientation="portrait">
 
         </activity>
     </application>

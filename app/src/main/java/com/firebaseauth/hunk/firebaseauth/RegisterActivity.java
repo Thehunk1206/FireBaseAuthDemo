@@ -7,10 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,11 +30,18 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText mNameET,mEmailET,mPasswordET,mConfirmPasswordET;
     private Button mCreateAccBtn;
     private ProgressDialog mRegister_progress;
+    //custom_error_toast_text
+    private TextView error_text;
+    private Toast error_toast;
+
+    private LinearLayout mRegister_layout;
+    private Animation ShakeAnimation;
 
     private String name,email,password,confirm_password;
 
@@ -50,9 +65,21 @@ public class RegisterActivity extends AppCompatActivity {
         mPasswordET = findViewById(R.id.password_ET);
         mConfirmPasswordET = findViewById(R.id.confirm_password_ET);
         mCreateAccBtn = findViewById(R.id.register_acc_btn);
+        mRegister_layout = findViewById(R.id.register_layout);
+
+
        // mCreateAccBtn.setEnabled(false);
 
         mRegister_progress = new ProgressDialog(this);
+
+        //inflating custom toast
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast,(ViewGroup) findViewById(R.id.custom_error_toast));
+        error_text = layout.findViewById(R.id.error_text);
+        error_toast = new Toast(getApplicationContext());
+        error_toast.setGravity(Gravity.CENTER_VERTICAL,0,0);
+        error_toast.setDuration(Toast.LENGTH_SHORT);
+        error_toast.setView(layout);
 
 
 
@@ -67,53 +94,45 @@ public class RegisterActivity extends AppCompatActivity {
                 password = mPasswordET.getText().toString().trim();
                 confirm_password = mConfirmPasswordET.getText().toString().trim();
 
-                if(name.isEmpty()){
-                    mNameET.setError("PLease Enter your Name");
-                    mNameET.setFocusable(true);
-                }
-                if(email.isEmpty()){
-                    mEmailET.setError("Please Enter Your Email ID");
-                    mEmailET.setFocusable(true);
-                }
-                if(password.isEmpty()){
-                    mPasswordET.setError("Please Enter Your Password");
-                    mPasswordET.setFocusable(true);
+                if(name.isEmpty() || email.isEmpty() || password.isEmpty() || confirm_password.isEmpty()){
+                    error_text.setText("All fields are required!!!");
+                    error_toast.show();
+                    animateLayout();
 
-                }
 
-                if(confirm_password.isEmpty()){
-                    mConfirmPasswordET.setError("Please Confirm Your Password");
+
+                }else if(name.length() < 3){
+                    error_text.setText("Name must contain 3 or more character");
+                    error_toast.show();
+                    animateLayout();
+
+                }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                    error_text.setText("Enter a valid Email address");
+                    error_toast.show();
+                    animateLayout();
+
+
+
+                }else if(password.length() < 6){
+                    error_text.setText("Password must contain 6 or more character");
+                    error_toast.show();
+                    animateLayout();
+
+                }else if(!password.equals(confirm_password) || !confirm_password.equals(password)){
+                    error_text.setText("Please enter correct password in both fields");
+                    error_toast.show();
                     mConfirmPasswordET.setFocusable(true);
+                    animateLayout();
 
-                }
-
-                if(name.length() < 3 ){
-                    mNameET.setError("Name Should has more the 3 characters");
-                    mNameET.setFocusable(true);
-                }
-                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-                    mEmailET.setError("Please Enter Valid Email address");
-                    mEmailET.setFocusable(true);
-                }
-                if(password.length() < 6){
-                    mPasswordET.setError("Password must contain 6 or more than 6 character");
-                    mPasswordET.setFocusable(true);
-
-                }
-
-                if(!password.equals(confirm_password)){
-                    mConfirmPasswordET.setError("Password did not matched");
-                    mConfirmPasswordET.setFocusable(true);
-                }
-                if(!TextUtils.isEmpty(name) || !TextUtils.isEmpty(email) || !TextUtils.isEmpty(password) || !TextUtils.isEmpty(confirm_password)){
-                    mRegister_progress.setTitle("Registering Account");
-                    mRegister_progress.setMessage("Creating Account ....");
+                }else{
+                    mRegister_progress.setTitle("Creating account on"+ R.string.app_name);
+                    mRegister_progress.setMessage("Please Wait while we create your account");
                     mRegister_progress.setCanceledOnTouchOutside(false);
                     mRegister_progress.show();
 
                     register_user();
-                }
 
+                }
 
 
             }
@@ -124,8 +143,18 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    private void animateLayout() {
+
+        ShakeAnimation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.shake_anim);
+
+        ShakeAnimation.setInterpolator(getApplicationContext(), android.R.anim.cycle_interpolator);
+        ShakeAnimation.setRepeatCount(3);
+        mRegister_layout.setAnimation(ShakeAnimation);
+    }
+
+
     private void register_user() {
-        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(RegisterActivity.this,new OnCompleteListener<AuthResult>() {
+        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
@@ -156,6 +185,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 EmailVerificationPage.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(EmailVerificationPage);
 
+                            }else{
+                                mRegister_progress.hide();
+                                //TODO remove toast message
+                                error_text.setText("Something went wrong, try again");
+
                             }
                         }
                     });
@@ -169,4 +203,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
     }
+
+
+
 }
